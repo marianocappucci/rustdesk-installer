@@ -1,0 +1,57 @@
+# ============================================================
+# Configuración de RustDesk
+# Servidor ID y Relay Personalizado
+# ============================================================
+# Este archivo define la configuración de conexión del cliente RustDesk
+# Copialo a: %APPDATA%\RustDesk\config\RustDesk.toml
+
+[network]
+# Servidor Relay - servidor intermedio para las conexiones
+relay = "149.50.136.218"
+
+[server]
+# Servidor de ID - servidor de control y autenticación
+id = "149.50.136.218"
+# Clave del servidor - identificación segura
+key = "e0wsBkM2RcYOdy2mDeI82FogAgkhTQePyKXZlyGPr8g="
+
+# ============================================================
+# CONFIGURACION ADICIONAL (OPCIONAL)
+# ============================================================
+# Descomenta las siguientes líneas si necesitas configuración avanzada
+
+# [display]
+# Configuración de pantalla
+# resolution = "1920x1080"
+# dpi = 96
+
+# [security]
+# direct-ipv6 = false
+# allow-ipv4 = true
+# allow-ipv6 = true
+
+# [options]
+# Opciones adicionales
+# auto-connect = true
+# minimize-on-launch = false
+
+# ============================================================
+# NOTAS IMPORTANTES
+# ============================================================
+# 1. Ubicación del archivo:
+#    C:\Users\[TuUsuario]\AppData\Roaming\RustDesk\config\RustDesk.toml
+#
+# 2. Permisos requeridos:
+#    - El usuario debe tener permisos de lectura/escritura
+#
+# 3. Reinicio requerido:
+#    - Reinicia RustDesk después de editar este archivo
+#
+# 4. Formato:
+#    - Usa espacios para indentación (no tabs)
+#    - Las claves deben estar en minúsculas
+#    - Los valores entre comillas son strings
+#
+# 5. Respaldo:
+#    - Haz una copia de seguridad antes de editar
+#    - En caso de problema, restaura la copia anterior
