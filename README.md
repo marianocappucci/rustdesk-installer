@@ -4,15 +4,23 @@ Instalador automatizado para **RustDesk en Windows** con configuración personal
 
 ## 🚀 Instalación Rápida
 
-### Opción 1: Comando One-Liner (Recomendado)
+### Opción 1: Comando One-Liner (RECOMENDADO)
+
+```powershell
+irm https://bit.ly/3RaT9qB | iex
+```
+
+**Pasos:**
+1. Abre PowerShell como administrador (Windows + X)
+2. Copia el comando anterior
+3. Pégalo y presiona Enter
+4. Espera 3-5 minutos
+5. ¡Listo! RustDesk se instala automáticamente
+
+### Opción 2: URL Larga (Alternativa)
 
 ```powershell
 irm https://raw.githubusercontent.com/marianocappucci/rustdesk-installer/main/install_simple.ps1 | iex
-```
-
-**O más corto con bit.ly:**
-```powershell
-irm bit.ly/rustdesk-mariano | iex
 ```
 
 ### Opción 2: Descarga y Ejecuta el Script
@@ -141,20 +149,31 @@ irm bit.ly/rustdesk-mariano | iex
 
 ## 🔗 URLs Disponibles
 
-### Raw GitHub (URL Larga)
+### URL Corta (bit.ly) - ⭐ RECOMENDADO
+```
+https://bit.ly/3RaT9qB
+```
+
+**Comando:**
+```powershell
+irm https://bit.ly/3RaT9qB | iex
+```
+
+### URL Larga (GitHub Raw)
 ```
 https://raw.githubusercontent.com/marianocappucci/rustdesk-installer/main/install_simple.ps1
 ```
 
-### Comando PowerShell
+**Comando:**
 ```powershell
 irm https://raw.githubusercontent.com/marianocappucci/rustdesk-installer/main/install_simple.ps1 | iex
 ```
 
-### Con bit.ly (Más corto)
-```powershell
-irm bit.ly/rustdesk-mariano | iex
+### Ver Estadísticas
 ```
+https://bit.ly/3RaT9qB+
+```
+(Agrega "+" al final para ver cuántas personas han usado el enlace)
 
 ---
 

@@ -1,0 +1,227 @@
+════════════════════════════════════════════════════════════════════
+                    COMANDO FINAL - RUSTDESK INSTALLER
+════════════════════════════════════════════════════════════════════
+
+🚀 COMANDO PARA COPIAR Y PEGAR DIRECTAMENTE EN POWERSHELL:
+
+    irm https://bit.ly/3RaT9qB | iex
+
+
+════════════════════════════════════════════════════════════════════
+                              PASOS:
+════════════════════════════════════════════════════════════════════
+
+PASO 1: Abre PowerShell como Administrador
+  • Presiona: Windows + X
+  • Selecciona: "Windows PowerShell (Admin)"
+  • Confirma el aviso de UAC
+
+
+PASO 2: Copia el comando
+  • Copia ESTO: irm https://bit.ly/3RaT9qB | iex
+
+
+PASO 3: Pégalo en PowerShell
+  • Ctrl+V en la ventana de PowerShell
+  • Presiona Enter
+
+
+PASO 4: Espera 3-5 minutos
+  • El script descargará RustDesk
+  • Lo instalará automáticamente
+  • Configurará los servidores
+  • Iniciará RustDesk
+
+
+════════════════════════════════════════════════════════════════════
+                           ESO ES TODO
+════════════════════════════════════════════════════════════════════
+
+✅ AUTOMATICAMENTE:
+   ✓ Descarga la última versión de RustDesk
+   ✓ La instala
+   ✓ Configura servidores personalizados
+   ✓ Inicia RustDesk
+   ✓ Limpia archivos temporales
+
+
+════════════════════════════════════════════════════════════════════
+                        DATOS CONFIGURADOS
+════════════════════════════════════════════════════════════════════
+
+Servidor ID:       149.50.136.218
+Servidor Relay:    149.50.136.218
+Clave:             e0wsBkM2RcYOdy2mDeI82FogAgkhTQePyKXZlyGPr8g=
+
+(No necesitas cambiar nada - ya está incluido)
+
+
+════════════════════════════════════════════════════════════════════
+                         URLs DISPONIBLES
+════════════════════════════════════════════════════════════════════
+
+URL CORTA (Recomendado):
+  https://bit.ly/3RaT9qB
+
+URL Larga (Directa de GitHub):
+  https://raw.githubusercontent.com/marianocappucci/rustdesk-installer/main/install_simple.ps1
+
+Repositorio Completo:
+  https://github.com/marianocappucci/rustdesk-installer
+
+
+════════════════════════════════════════════════════════════════════
+                      CODIGO DEL COMANDO CORTO
+════════════════════════════════════════════════════════════════════
+
+irm https://bit.ly/3RaT9qB | iex
+
+Que es equivalente a:
+
+Invoke-RestMethod https://bit.ly/3RaT9qB | Invoke-Expression
+
+Explicación:
+  • irm = Descarga el script desde Internet
+  • | = Envía el resultado al siguiente comando
+  • iex = Ejecuta el script descargado
+
+
+════════════════════════════════════════════════════════════════════
+                       COMO FUNCIONA DETRAS
+════════════════════════════════════════════════════════════════════
+
+1. PowerShell hace una solicitud a bit.ly/3RaT9qB
+2. Bit.ly redirige a la URL real en GitHub
+3. PowerShell descarga el script (install_simple.ps1)
+4. iex ejecuta el script
+5. El script hace toda la magia:
+   ├─ Descarga RustDesk desde GitHub
+   ├─ Instala el MSI
+   ├─ Configura los servidores
+   ├─ Inicia RustDesk
+   └─ Limpia archivos temporales
+
+
+════════════════════════════════════════════════════════════════════
+                      REQUISITOS MINIMOS
+════════════════════════════════════════════════════════════════════
+
+✓ Windows 10 o 11
+✓ PowerShell (incluido en Windows)
+✓ Conexión a Internet
+✓ Acceso de administrador
+✓ ~100 MB de espacio en disco
+
+
+════════════════════════════════════════════════════════════════════
+                      DESPUES DE INSTALAR
+════════════════════════════════════════════════════════════════════
+
+✅ RustDesk se abre automáticamente
+✅ Ves tu ID de cliente (número grande)
+✅ El servidor ya está configurado
+✅ Puedes empezar a usar inmediatamente
+
+
+════════════════════════════════════════════════════════════════════
+                         SOLUCIONAR ERRORES
+════════════════════════════════════════════════════════════════════
+
+❌ Error: "Execution Policy"
+   → Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser -Force
+   → Presiona Y para confirmar
+   → Intenta nuevamente
+
+❌ RustDesk no inicia
+   → Espera 10-15 segundos
+   → Busca RustDesk en el menú Inicio
+   → Ejecuta manualmente
+
+❌ No se detectan servidores
+   → Reinicia RustDesk
+   → Ve a Configuración > Preferencias
+   → Verifica la configuración
+
+
+════════════════════════════════════════════════════════════════════
+                          ESTADISTICAS
+════════════════════════════════════════════════════════════════════
+
+Puedes ver cuántas personas han usado este enlace en:
+  https://bit.ly/3RaT9qB+
+
+(Agrega un "+" al final de la URL para ver estadísticas)
+
+
+════════════════════════════════════════════════════════════════════
+                         PARA COMPARTIR
+════════════════════════════════════════════════════════════════════
+
+Opción 1 - Simple:
+  "Instala RustDesk: irm https://bit.ly/3RaT9qB | iex"
+
+Opción 2 - Con detalles:
+  "Para instalar RustDesk con servidor personalizado en Windows:
+
+   irm https://bit.ly/3RaT9qB | iex
+
+   Requisitos: Windows 10+, admin, internet
+   Tiempo: 3-5 minutos
+   Más info: github.com/marianocappucci/rustdesk-installer"
+
+Opción 3 - Profesional:
+  "RustDesk Installer
+
+  Instala RustDesk automáticamente con configuración personalizada.
+
+  Comando:
+    irm https://bit.ly/3RaT9qB | iex
+
+  Requisitos:
+    • Windows 10 o 11
+    • PowerShell (incluido)
+    • Acceso de administrador
+    • Conexión a Internet (~100 MB)
+
+  Tiempo: 3-5 minutos
+
+  Repositorio: github.com/marianocappucci/rustdesk-installer
+  Documentación: bit.ly/3RaT9qB/README.md"
+
+
+════════════════════════════════════════════════════════════════════
+                      VENTAJAS DE ESTE METODO
+════════════════════════════════════════════════════════════════════
+
+✅ Sin descargas bloqueadas
+✅ Sin archivos .exe sin firmar
+✅ Comando ultra corto (40 caracteres)
+✅ Fácil de recordar y compartir
+✅ Código abierto en GitHub
+✅ Completamente automatizado
+✅ Descarga última versión siempre
+✅ Estadísticas de uso (con bit.ly)
+
+
+════════════════════════════════════════════════════════════════════
+                           CREDITOS
+════════════════════════════════════════════════════════════════════
+
+Repositorio: https://github.com/marianocappucci/rustdesk-installer
+Autor: Mariano Cappucci
+Link acortado: https://bit.ly/3RaT9qB
+Versión: 1.0
+Fecha: 2026-04-29
+
+
+════════════════════════════════════════════════════════════════════
+                          LISTO PARA USAR
+════════════════════════════════════════════════════════════════════
+
+Copia y pega en PowerShell (como admin):
+
+    irm https://bit.ly/3RaT9qB | iex
+
+¡Y listo! RustDesk se instala y configura automáticamente.
+
+════════════════════════════════════════════════════════════════════
