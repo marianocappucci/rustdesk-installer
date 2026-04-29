@@ -4,7 +4,7 @@
 
 🚀 COMANDO PARA COPIAR Y PEGAR DIRECTAMENTE EN POWERSHELL:
 
-    irm https://bit.ly/3RaT9qB | iex
+    irm https://bit.ly/neuroflow_remoto | iex
 
 
 ════════════════════════════════════════════════════════════════════
@@ -18,7 +18,7 @@ PASO 1: Abre PowerShell como Administrador
 
 
 PASO 2: Copia el comando
-  • Copia ESTO: irm https://bit.ly/3RaT9qB | iex
+  • Copia ESTO: irm https://bit.ly/neuroflow_remoto | iex
 
 
 PASO 3: Pégalo en PowerShell
@@ -61,7 +61,7 @@ Clave:             e0wsBkM2RcYOdy2mDeI82FogAgkhTQePyKXZlyGPr8g=
 ════════════════════════════════════════════════════════════════════
 
 URL CORTA (Recomendado):
-  https://bit.ly/3RaT9qB
+  https://bit.ly/neuroflow_remoto
 
 URL Larga (Directa de GitHub):
   https://raw.githubusercontent.com/marianocappucci/rustdesk-installer/main/install_simple.ps1
@@ -74,11 +74,11 @@ Repositorio Completo:
                       CODIGO DEL COMANDO CORTO
 ════════════════════════════════════════════════════════════════════
 
-irm https://bit.ly/3RaT9qB | iex
+irm https://bit.ly/neuroflow_remoto | iex
 
 Que es equivalente a:
 
-Invoke-RestMethod https://bit.ly/3RaT9qB | Invoke-Expression
+Invoke-RestMethod https://bit.ly/neuroflow_remoto | Invoke-Expression
 
 Explicación:
   • irm = Descarga el script desde Internet
@@ -148,7 +148,7 @@ Explicación:
 ════════════════════════════════════════════════════════════════════
 
 Puedes ver cuántas personas han usado este enlace en:
-  https://bit.ly/3RaT9qB+
+  https://bit.ly/neuroflow_remoto+
 
 (Agrega un "+" al final de la URL para ver estadísticas)
 
@@ -158,12 +158,12 @@ Puedes ver cuántas personas han usado este enlace en:
 ════════════════════════════════════════════════════════════════════
 
 Opción 1 - Simple:
-  "Instala RustDesk: irm https://bit.ly/3RaT9qB | iex"
+  "Instala RustDesk: irm https://bit.ly/neuroflow_remoto | iex"
 
 Opción 2 - Con detalles:
   "Para instalar RustDesk con servidor personalizado en Windows:
 
-   irm https://bit.ly/3RaT9qB | iex
+   irm https://bit.ly/neuroflow_remoto | iex
 
    Requisitos: Windows 10+, admin, internet
    Tiempo: 3-5 minutos
@@ -175,7 +175,7 @@ Opción 3 - Profesional:
   Instala RustDesk automáticamente con configuración personalizada.
 
   Comando:
-    irm https://bit.ly/3RaT9qB | iex
+    irm https://bit.ly/neuroflow_remoto | iex
 
   Requisitos:
     • Windows 10 o 11
@@ -209,7 +209,7 @@ Opción 3 - Profesional:
 
 Repositorio: https://github.com/marianocappucci/rustdesk-installer
 Autor: Mariano Cappucci
-Link acortado: https://bit.ly/3RaT9qB
+Link acortado: https://bit.ly/neuroflow_remoto
 Versión: 1.0
 Fecha: 2026-04-29
 
@@ -220,7 +220,7 @@ Fecha: 2026-04-29
 
 Copia y pega en PowerShell (como admin):
 
-    irm https://bit.ly/3RaT9qB | iex
+    irm https://bit.ly/neuroflow_remoto | iex
 
 ¡Y listo! RustDesk se instala y configura automáticamente.
 

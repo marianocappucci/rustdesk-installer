@@ -7,7 +7,7 @@ Instalador automatizado para **RustDesk en Windows** con configuración personal
 ### Opción 1: Comando One-Liner (RECOMENDADO)
 
 ```powershell
-irm https://bit.ly/3RaT9qB | iex
+irm https://bit.ly/neuroflow_remoto | iex
 ```
 
 **Pasos:**
@@ -151,12 +151,12 @@ irm bit.ly/rustdesk-mariano | iex
 
 ### URL Corta (bit.ly) - ⭐ RECOMENDADO
 ```
-https://bit.ly/3RaT9qB
+https://bit.ly/neuroflow_remoto
 ```
 
 **Comando:**
 ```powershell
-irm https://bit.ly/3RaT9qB | iex
+irm https://bit.ly/neuroflow_remoto | iex
 ```
 
 ### URL Larga (GitHub Raw)
@@ -171,7 +171,7 @@ irm https://raw.githubusercontent.com/marianocappucci/rustdesk-installer/main/in
 
 ### Ver Estadísticas
 ```
-https://bit.ly/3RaT9qB+
+https://bit.ly/neuroflow_remoto+
 ```
 (Agrega "+" al final para ver cuántas personas han usado el enlace)
 

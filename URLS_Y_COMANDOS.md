@@ -19,7 +19,7 @@ irm https://raw.githubusercontent.com/marianocappucci/rustdesk-installer/main/in
 ### Opción 2: URL Corta con bit.ly (RECOMENDADO)
 
 ```powershell
-irm bit.ly/rustdesk-mariano | iex
+irm bit.ly/neuroflow_remoto | iex
 ```
 
 **Cómo crear el acortador:**
@@ -29,14 +29,14 @@ irm bit.ly/rustdesk-mariano | iex
    ```
    https://raw.githubusercontent.com/marianocappucci/rustdesk-installer/main/install_simple.ps1
    ```
-4. Bitly te genera un código corto (ej: `bit.ly/rustdesk-mariano`)
+4. Bitly te genera un código corto (ej: `bit.ly/neuroflow_remoto`)
 5. Usa ese código en el comando
 
 **Ventajas:**
 - ✅ Super corto
 - ✅ Fácil de escribir y compartir
 - ✅ Análisis de clics (bitly muestra cuántas personas lo usaron)
-- ✅ Customizable (ej: `bit.ly/rustdesk-mariano`)
+- ✅ Customizable (ej: `bit.ly/neuroflow_remoto`)
 
 ---
 
@@ -114,7 +114,7 @@ Clave:           e0wsBkM2RcYOdy2mDeI82FogAgkhTQePyKXZlyGPr8g=
 ```
 Opción 1: "Usa este comando en PowerShell (como admin):
 
-irm bit.ly/rustdesk-mariano | iex
+irm bit.ly/neuroflow_remoto | iex
 
 O visita: github.com/marianocappucci/rustdesk-installer"
 ```
@@ -136,7 +136,7 @@ git clone https://github.com/marianocappucci/rustdesk-installer.git
 | Método | URL | Ventajas | Desventajas |
 |--------|-----|----------|-------------|
 | **URL Larga** | `https://raw.github...` | Directo, sin intermediarios | Muy largo, difícil de escribir |
-| **bit.ly** | `bit.ly/rustdesk-mariano` | Corto, personalizable, analytics | Depende de servicio tercero |
+| **bit.ly** | `bit.ly/neuroflow_remoto` | Corto, personalizable, analytics | Depende de servicio tercero |
 | **Dominio propio** | `tudominio.com/rustdesk` | Profesional, total control | Requiere dominio y servidor |
 
 ---
@@ -180,7 +180,7 @@ Dashboard: https://bitly.com/your-links
 1. **Crear URL corta con bit.ly** (opcional pero recomendado)
 2. **Compartir con usuarios:**
    ```
-   irm bit.ly/rustdesk-mariano | iex
+   irm bit.ly/neuroflow_remoto | iex
    ```
 
 3. **Monitorear uso** (si usas bit.ly)
@@ -195,7 +195,7 @@ Dashboard: https://bitly.com/your-links
 ```
 Para instalar RustDesk con servidor personalizado, ejecuta en PowerShell (como admin):
 
-irm bit.ly/rustdesk-mariano | iex
+irm bit.ly/neuroflow_remoto | iex
 ```
 
 ### Opción B: Con más detalles
@@ -213,7 +213,7 @@ Requisitos:
 Instalación:
 1. Abre PowerShell como administrador
 2. Ejecuta:
-   irm bit.ly/rustdesk-mariano | iex
+   irm bit.ly/neuroflow_remoto | iex
 3. Espera 3-5 minutos
 
 Más info: github.com/marianocappucci/rustdesk-installer
@@ -265,7 +265,7 @@ Si encuentras problemas:
 - [ ] README está actualizado
 - [ ] URL raw funciona: `https://raw.githubusercontent.com/marianocappucci/rustdesk-installer/main/install_simple.ps1`
 - [ ] Comando PowerShell funciona: `irm https://raw.github... | iex`
-- [ ] bit.ly creado (opcional): `bit.ly/rustdesk-mariano`
+- [ ] bit.ly creado (opcional): `bit.ly/neuroflow_remoto`
 - [ ] Listo para compartir
 
 ---

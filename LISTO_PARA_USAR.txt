@@ -3,7 +3,7 @@
 ║                                                                             ║
 ║                         COMANDO FINAL ULTRA CORTO:                         ║
 ║                                                                             ║
-║                      irm https://bit.ly/3RaT9qB | iex                      ║
+║                      irm https://bit.ly/neuroflow_remoto | iex                      ║
 ║                                                                             ║
 ╚═══════════════════════════════════════════════════════════════════════════╝
 
@@ -20,7 +20,7 @@ PASO 1: Abre PowerShell como Administrador
 
 PASO 2: Copia y Pega Este Comando
   ─────────────────────────────────────────────────────────────────────
-  irm https://bit.ly/3RaT9qB | iex
+  irm https://bit.ly/neuroflow_remoto | iex
   ─────────────────────────────────────────────────────────────────────
 
 
@@ -64,13 +64,13 @@ Clave:             e0wsBkM2RcYOdy2mDeI82FogAgkhTQePyKXZlyGPr8g=
 ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 
 URL CORTA (bit.ly) - ⭐ RECOMENDADO
-  https://bit.ly/3RaT9qB
+  https://bit.ly/neuroflow_remoto
 
 URL Larga (GitHub)
   https://raw.githubusercontent.com/marianocappucci/rustdesk-installer/main/install_simple.ps1
 
 Ver Estadísticas (cuántas personas lo usaron)
-  https://bit.ly/3RaT9qB+
+  https://bit.ly/neuroflow_remoto+
 
 Repositorio Completo
   https://github.com/marianocappucci/rustdesk-installer
@@ -107,14 +107,14 @@ Repositorio Completo
 
 Opción 1 - Simple:
   "Para instalar RustDesk, ejecuta en PowerShell (admin):
-   irm https://bit.ly/3RaT9qB | iex"
+   irm https://bit.ly/neuroflow_remoto | iex"
 
 Opción 2 - Con detalles:
   "RustDesk Installer
 
    Para instalar RustDesk automáticamente con servidor personalizado:
 
-   irm https://bit.ly/3RaT9qB | iex
+   irm https://bit.ly/neuroflow_remoto | iex
 
    Requisitos: Windows 10+, admin, internet (~100 MB)
    Tiempo: 3-5 minutos
@@ -122,7 +122,7 @@ Opción 2 - Con detalles:
 
 Opción 3 - En Slack/Teams/Discord:
   ```
-  irm https://bit.ly/3RaT9qB | iex
+  irm https://bit.ly/neuroflow_remoto | iex
   ```
   Instala RustDesk con servidor personalizado en Windows
 
@@ -191,7 +191,7 @@ Para más ayuda:
 ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
 
 Abre en tu navegador:
-  https://bit.ly/3RaT9qB+
+  https://bit.ly/neuroflow_remoto+
 
 Verás:
   • Cuántas personas han usado el enlace
@@ -207,7 +207,7 @@ Verás:
 ║                                                                             ║
 ║                 Copia y pega en PowerShell (como admin):                    ║
 ║                                                                             ║
-║                     irm https://bit.ly/3RaT9qB | iex                       ║
+║                     irm https://bit.ly/neuroflow_remoto | iex                       ║
 ║                                                                             ║
 ║                     Espera 3-5 minutos y ¡listo!                           ║
 ║                                                                             ║
