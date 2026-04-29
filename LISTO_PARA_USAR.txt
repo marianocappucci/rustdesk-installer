@@ -1,0 +1,222 @@
+╔═══════════════════════════════════════════════════════════════════════════╗
+║                     RUSTDESK INSTALLER - LISTO PARA USAR                   ║
+║                                                                             ║
+║                         COMANDO FINAL ULTRA CORTO:                         ║
+║                                                                             ║
+║                      irm https://bit.ly/3RaT9qB | iex                      ║
+║                                                                             ║
+╚═══════════════════════════════════════════════════════════════════════════╝
+
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ 🚀 COMO USAR EN 3 PASOS                                                    ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+
+PASO 1: Abre PowerShell como Administrador
+  • Presiona: Windows + X
+  • Selecciona: "Windows PowerShell (Admin)"
+  • Confirma el aviso
+
+
+PASO 2: Copia y Pega Este Comando
+  ─────────────────────────────────────────────────────────────────────
+  irm https://bit.ly/3RaT9qB | iex
+  ─────────────────────────────────────────────────────────────────────
+
+
+PASO 3: Presiona Enter y Espera 3-5 Minutos
+  ✓ Descarga RustDesk (última versión)
+  ✓ Lo instala automáticamente
+  ✓ Configura los servidores
+  ✓ Inicia RustDesk
+  ✓ Limpia archivos temporales
+
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ 📊 LO QUE HACE EL COMANDO                                                  ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+
+irm              → Descarga el script desde Internet
+https://...     → URL que apunta al script en GitHub
+| iex            → Ejecuta el script descargado
+
+El script automáticamente:
+  [1/5] Descarga la última versión de RustDesk
+  [2/5] Instala el programa (MSI)
+  [3/5] Configura servidores personalizados
+  [4/5] Inicia RustDesk
+  [5/5] Limpia archivos temporales
+
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ 🎯 DATOS CONFIGURADOS AUTOMÁTICAMENTE                                      ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+
+Servidor ID:       149.50.136.218
+Servidor Relay:    149.50.136.218
+Clave:             e0wsBkM2RcYOdy2mDeI82FogAgkhTQePyKXZlyGPr8g=
+
+(No necesitas hacer nada - todo está configurado)
+
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ 🔗 URLS DISPONIBLES                                                        ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+
+URL CORTA (bit.ly) - ⭐ RECOMENDADO
+  https://bit.ly/3RaT9qB
+
+URL Larga (GitHub)
+  https://raw.githubusercontent.com/marianocappucci/rustdesk-installer/main/install_simple.ps1
+
+Ver Estadísticas (cuántas personas lo usaron)
+  https://bit.ly/3RaT9qB+
+
+Repositorio Completo
+  https://github.com/marianocappucci/rustdesk-installer
+
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ ✅ REQUISITOS MINIMOS                                                      ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+
+✓ Windows 10 o 11
+✓ PowerShell (incluido en Windows)
+✓ Acceso de administrador
+✓ Conexión a Internet
+✓ ~100 MB de espacio en disco
+
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ 🎁 VENTAJAS DE ESTE METODO                                                ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+
+✅ Sin descargas bloqueadas (sin .bat ni .exe)
+✅ Un comando ultra corto (40 caracteres)
+✅ Completamente automatizado
+✅ Código abierto en GitHub (puedes revisar qué hace)
+✅ Descarga siempre la última versión
+✅ Sigue redirecciones de bit.ly automáticamente
+✅ Estadísticas de uso (con bit.ly)
+✅ Fácil de compartir y recordar
+
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ 📝 COMO COMPARTIR CON OTROS                                               ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+
+Opción 1 - Simple:
+  "Para instalar RustDesk, ejecuta en PowerShell (admin):
+   irm https://bit.ly/3RaT9qB | iex"
+
+Opción 2 - Con detalles:
+  "RustDesk Installer
+
+   Para instalar RustDesk automáticamente con servidor personalizado:
+
+   irm https://bit.ly/3RaT9qB | iex
+
+   Requisitos: Windows 10+, admin, internet (~100 MB)
+   Tiempo: 3-5 minutos
+   Más info: github.com/marianocappucci/rustdesk-installer"
+
+Opción 3 - En Slack/Teams/Discord:
+  ```
+  irm https://bit.ly/3RaT9qB | iex
+  ```
+  Instala RustDesk con servidor personalizado en Windows
+
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ 🆘 SI ALGO FALLA                                                           ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+
+Error: "No se pueden ejecutar scripts"
+  → Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser -Force
+  → Presiona Y
+  → Intenta nuevamente
+
+Error: "No se puede conectar"
+  → Comprueba tu conexión a Internet
+  → Verifica que bit.ly y GitHub no estén bloqueados
+  → Intenta nuevamente
+
+RustDesk no inicia después
+  → Espera 10-15 segundos
+  → Busca "RustDesk" en el menú Inicio
+  → Ejecuta manualmente
+
+No se detectan los servidores
+  → Reinicia RustDesk
+  → Ve a Configuración > Preferencias
+  → Verifica que los servidores estén ahí
+
+Para más ayuda:
+  → Abre una issue en: github.com/marianocappucci/rustdesk-installer/issues
+
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ 📊 ARCHIVOS EN GITHUB                                                      ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+
+✓ install_simple.ps1         ← Script recomendado (el que usa el comando)
+✓ install_rustdesk.ps1       ← Script completo con opciones avanzadas
+✓ configure_rustdesk.ps1     ← Para cambiar configuración después
+✓ RustDesk.toml              ← Archivo de configuración de ejemplo
+✓ README.md                  ← Documentación completa
+✓ COMANDO_FINAL.txt          ← Este comando explicado en detalle
+✓ .gitignore                 ← Configuración de Git
+
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ 🔍 COMO FUNCIONA DETRAS DE ESCENAS                                         ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+
+1. PowerShell hace solicitud HTTP a bit.ly/3RaT9qB
+2. bit.ly redirige a: raw.githubusercontent.com/marianocappucci/...
+3. PowerShell descarga install_simple.ps1 (el script)
+4. iex ejecuta el script en PowerShell
+5. El script:
+   ├─ Obtiene URL de última versión de RustDesk desde GitHub API
+   ├─ Descarga el instalador MSI
+   ├─ Detiene RustDesk si está corriendo
+   ├─ Instala RustDesk usando msiexec.exe
+   ├─ Crea archivo de configuración con tus servidores
+   ├─ Inicia RustDesk
+   └─ Limpia archivos temporales
+
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ 📈 VER ESTADISTICAS DE USO                                                ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+
+Abre en tu navegador:
+  https://bit.ly/3RaT9qB+
+
+Verás:
+  • Cuántas personas han usado el enlace
+  • De dónde lo usaron (país, ciudad)
+  • En qué dispositivos
+  • Cuándo lo usaron
+  • Navegadores utilizados
+
+
+╔═══════════════════════════════════════════════════════════════════════════╗
+║                                                                             ║
+║                          ¡LISTO PARA USAR!                                ║
+║                                                                             ║
+║                 Copia y pega en PowerShell (como admin):                    ║
+║                                                                             ║
+║                     irm https://bit.ly/3RaT9qB | iex                       ║
+║                                                                             ║
+║                     Espera 3-5 minutos y ¡listo!                           ║
+║                                                                             ║
+╚═══════════════════════════════════════════════════════════════════════════╝
+
+
+📚 Documentación Completa:
+   https://github.com/marianocappucci/rustdesk-installer
+
+👤 Autor: Mariano Cappucci
+📅 Fecha: 2026-04-29
+🔖 Versión: 1.0
