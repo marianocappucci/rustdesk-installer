@@ -2,9 +2,22 @@
 
 Instalador automatizado para **RustDesk en Windows** con configuración personalizada de servidor (ID Server y Relay).
 
-## 🚀 Instalación Rápida
+## Instalación Rápida
 
-### Opción 1: Comando One-Liner (RECOMENDADO)
+### Opción 1: Descargar y ejecutar (RECOMENDADO)
+
+**[Descargar instalar_rustdesk.exe](https://github.com/marianocappucci/rustdesk-installer/releases/latest/download/instalar_rustdesk.exe)**
+
+**Pasos:**
+1. Descarga el archivo haciendo clic en el enlace de arriba
+2. Doble clic en `instalar_rustdesk.exe`
+3. Acepta la ventana de seguridad de Windows ("¿Permitir cambios?")
+4. Esperá 3-5 minutos mientras se instala
+5. ¡Listo! RustDesk queda instalado y configurado automáticamente
+
+---
+
+### Opción 2: Comando PowerShell (alternativa)
 
 ```powershell
 irm https://bit.ly/neuroflow_remoto | iex
@@ -15,15 +28,8 @@ irm https://bit.ly/neuroflow_remoto | iex
 2. Copia el comando anterior
 3. Pégalo y presiona Enter
 4. Espera 3-5 minutos
-5. ¡Listo! RustDesk se instala automáticamente
 
-### Opción 2: URL Larga (Alternativa)
-
-```powershell
-irm https://raw.githubusercontent.com/marianocappucci/rustdesk-installer/main/install_simple.ps1 | iex
-```
-
-### Opción 2: Descarga y Ejecuta el Script
+### Opción 3: Descarga y Ejecuta el Script
 
 ```powershell
 # Abre PowerShell como administrador y ejecuta:

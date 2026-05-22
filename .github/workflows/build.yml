@@ -1,0 +1,67 @@
+name: Compilar Instalador EXE
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - install_simple.ps1
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Instalar PS2EXE
+        shell: powershell
+        run: |
+          Set-PSRepository PSGallery -InstallationPolicy Trusted
+          Install-Module -Name PS2EXE -Force -Scope CurrentUser
+
+      - name: Compilar PS1 a EXE
+        shell: powershell
+        run: |
+          Import-Module PS2EXE
+          Invoke-PS2EXE `
+            -InputFile  "install_simple.ps1" `
+            -OutputFile "instalar_rustdesk.exe" `
+            -Title       "Instalador RustDesk - NeuroFlow" `
+            -Description "Instala y configura RustDesk automaticamente" `
+            -Company     "NeuroFlow" `
+            -Version     "1.0.0.0" `
+            -requireAdmin
+
+          if (-not (Test-Path "instalar_rustdesk.exe")) {
+            Write-Error "Compilacion fallida: no se genero el EXE"
+            exit 1
+          }
+
+          $kb = [Math]::Round((Get-Item "instalar_rustdesk.exe").Length / 1KB, 0)
+          Write-Host "EXE generado correctamente ($kb KB)"
+
+      - name: Publicar Release
+        uses: ncipollo/release-action@v1
+        with:
+          tag: latest-installer
+          name: Instalador RustDesk - NeuroFlow
+          body: |
+            ## Instalador RustDesk - NeuroFlow
+
+            ### Como instalar
+            1. Descarga **instalar_rustdesk.exe** (boton de abajo)
+            2. Doble clic para ejecutar
+            3. Acepta la ventana de seguridad de Windows (UAC)
+            4. Espera que finalice la instalacion (3-5 minutos)
+
+            RustDesk se instala y configura automaticamente con el servidor de NeuroFlow.
+          artifacts: instalar_rustdesk.exe
+          allowUpdates: true
+          makeLatest: true
+          removeArtifacts: true
+          token: ${{ secrets.GITHUB_TOKEN }}
