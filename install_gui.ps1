@@ -270,6 +270,14 @@ $pR.Controls.AddRange(@($lRIcon, $lRTitle, $lRMsg, $pnlId, $lRInstr, $btnClose))
 
 $main.Controls.AddRange(@($pW, $pP, $pR))
 
+# ── Estado del instalador en script scope (Add_Tick no ve variables de Add_Click)
+$script:_sh      = $null
+$script:_bgTimer = $null
+$script:_ps      = $null
+$script:_rs      = $null
+$script:_handle  = $null
+$script:_bBack   = $null
+
 # ── Helpers de navegación ─────────────────────────────────────────────────────
 function Show-Screen ([string]$s) {
     $pW.Visible = $s -eq "W"
@@ -304,8 +312,8 @@ $btnInst.Add_Click({
     Show-Screen "P"
     $form.Refresh()
 
-    # Estado compartido entre hilo UI y hilo de trabajo
-    $sh = [hashtable]::Synchronized(@{
+    # Estado compartido — en $script: para que Add_Tick lo pueda leer
+    $script:_sh = [hashtable]::Synchronized(@{
         Pct     = 0
         Step    = "Iniciando..."
         Detail  = ""
@@ -316,23 +324,22 @@ $btnInst.Add_Click({
         RdId    = ""
     })
 
-    # Copiar config al scope del runspace
     $cfgIdSrv    = $CFG_ID_SERVER
     $cfgRelaySrv = $CFG_RELAY_SERVER
     $cfgKey      = $CFG_SERVER_KEY
 
-    $rs = [runspacefactory]::CreateRunspace()
-    $rs.ApartmentState = "MTA"
-    $rs.ThreadOptions  = "ReuseThread"
-    $rs.Open()
-    $rs.SessionStateProxy.SetVariable("sh",          $sh)
-    $rs.SessionStateProxy.SetVariable("cfgIdSrv",    $cfgIdSrv)
-    $rs.SessionStateProxy.SetVariable("cfgRelaySrv", $cfgRelaySrv)
-    $rs.SessionStateProxy.SetVariable("cfgKey",      $cfgKey)
+    $script:_rs = [runspacefactory]::CreateRunspace()
+    $script:_rs.ApartmentState = "MTA"
+    $script:_rs.ThreadOptions  = "ReuseThread"
+    $script:_rs.Open()
+    $script:_rs.SessionStateProxy.SetVariable("sh",          $script:_sh)
+    $script:_rs.SessionStateProxy.SetVariable("cfgIdSrv",    $cfgIdSrv)
+    $script:_rs.SessionStateProxy.SetVariable("cfgRelaySrv", $cfgRelaySrv)
+    $script:_rs.SessionStateProxy.SetVariable("cfgKey",      $cfgKey)
 
-    $ps = [powershell]::Create()
-    $ps.Runspace = $rs
-    [void]$ps.AddScript({
+    $script:_ps = [powershell]::Create()
+    $script:_ps.Runspace = $script:_rs
+    [void]$script:_ps.AddScript({
         function L { param($m) [void]$sh.LogQ.Enqueue($m) }
         function S { param($step, $det = "") $sh.Step = $step; $sh.Detail = $det }
         function P { param($p) $sh.Pct = $p }
@@ -522,68 +529,85 @@ $btnInst.Add_Click({
         }
     })
 
-    $handle = $ps.BeginInvoke()
+    $script:_handle = $script:_ps.BeginInvoke()
 
-    # Timer UI: lee estado compartido y actualiza controles cada 100 ms
-    $timer = New-Object Windows.Forms.Timer
-    $timer.Interval = 100
-    $timer.Add_Tick({
-        $progBar.Value = [Math]::Min($sh.Pct, 100)
-        $lPct.Text     = "$($sh.Pct)%"
-        $lPStep.Text   = $sh.Step
-        $lPDet.Text    = $sh.Detail
+    # Timer UI: lee $script:_sh y actualiza controles cada 100 ms
+    $script:_bgTimer = New-Object Windows.Forms.Timer
+    $script:_bgTimer.Interval = 100
+    $script:_bgTimer.Add_Tick({
+        try {
+            $progBar.Value = [Math]::Min($script:_sh.Pct, 100)
+            $lPct.Text     = "$($script:_sh.Pct)%"
+            $lPStep.Text   = $script:_sh.Step
+            $lPDet.Text    = $script:_sh.Detail
 
-        $line = [string]$null
-        while ($sh.LogQ.TryDequeue([ref]$line)) {
-            [void]$logBox.Items.Add($line)
-            $logBox.TopIndex = $logBox.Items.Count - 1
-        }
-
-        if (-not $sh.Done) { return }
-
-        $timer.Stop()
-        try { $ps.EndInvoke($handle) } catch {}
-        $ps.Dispose()
-        $rs.Close()
-
-        if ($sh.Success) {
-            # Mostrar ID en pantalla de resultado
-            if ($sh.RdId) {
-                $lId.Text = $sh.RdId
-                $lId.Font = $fBig
-            } else {
-                $lId.Text = "(Abrí RustDesk para ver tu ID)"
-                $lId.Font = $fBody
+            # TryDequeue con variable local en este scope
+            $line = $null
+            while ($script:_sh.LogQ.TryDequeue([ref]$line)) {
+                [void]$logBox.Items.Add([string]$line)
+                $logBox.TopIndex = $logBox.Items.Count - 1
+                $line = $null
             }
-            Show-Screen "R"
-        } else {
-            # Mostrar error inline con botón Volver
-            $lPStep.Text      = "Error durante la instalación"
-            $lPStep.ForeColor = $clrRed
-            $lPDet.Text       = $sh.Err
 
-            $bBack = New-Object Windows.Forms.Button
-            $bBack.Text      = "← Volver"
-            $bBack.Location  = New-Object Drawing.Point(190, 450)
-            $bBack.Size      = New-Object Drawing.Size(140, 36)
-            $bBack.FlatStyle = "Flat"
-            $bBack.BackColor = $clrOrange
-            $bBack.ForeColor = $clrWhite
-            $bBack.Font      = $fBold
-            $bBack.Add_Click({
-                $pP.Controls.Remove($bBack)
-                $lPStep.ForeColor = $clrText
-                $lPStep.Text = ""
-                $lPDet.Text  = ""
-                [void]$logBox.Items.Clear()
-                $progBar.Value = 0; $lPct.Text = "0%"
-                Show-Screen "W"
-            })
-            $pP.Controls.Add($bBack)
-            $bBack.BringToFront()
+            if (-not $script:_sh.Done) { return }
+
+            $script:_bgTimer.Stop()
+            try { $script:_ps.EndInvoke($script:_handle) } catch {}
+            $script:_ps.Dispose()
+            $script:_rs.Close()
+
+            if ($script:_sh.Success) {
+                if ($script:_sh.RdId) {
+                    $lId.Text = $script:_sh.RdId
+                    $lId.Font = $fBig
+                } else {
+                    $lId.Text = "(Abrí RustDesk para ver tu ID)"
+                    $lId.Font = $fBody
+                }
+                Show-Screen "R"
+            } else {
+                $lPStep.Text      = "Error durante la instalación"
+                $lPStep.ForeColor = $clrRed
+                $lPDet.Text       = $script:_sh.Err
+
+                $script:_bBack = New-Object Windows.Forms.Button
+                $script:_bBack.Text      = "← Volver"
+                $script:_bBack.Location  = New-Object Drawing.Point(190, 450)
+                $script:_bBack.Size      = New-Object Drawing.Size(140, 36)
+                $script:_bBack.FlatStyle = "Flat"
+                $script:_bBack.BackColor = $clrOrange
+                $script:_bBack.ForeColor = $clrWhite
+                $script:_bBack.Font      = $fBold
+                $script:_bBack.Add_Click({
+                    $pP.Controls.Remove($script:_bBack)
+                    $lPStep.ForeColor = $clrText
+                    $lPStep.Text  = ""
+                    $lPDet.Text   = ""
+                    [void]$logBox.Items.Clear()
+                    $progBar.Value = 0; $lPct.Text = "0%"
+                    Show-Screen "W"
+                })
+                $pP.Controls.Add($script:_bBack)
+                $script:_bBack.BringToFront()
+            }
+        } catch {
+            $script:_bgTimer.Stop()
+            [Windows.Forms.MessageBox]::Show(
+                "Error inesperado en el instalador:`n$_",
+                "Error",
+                [Windows.Forms.MessageBoxButtons]::OK,
+                [Windows.Forms.MessageBoxIcon]::Error
+            ) | Out-Null
         }
     })
-    $timer.Start()
+    $script:_bgTimer.Start()
+})
+
+# ── Cleanup al cerrar ─────────────────────────────────────────────────────────
+$form.Add_FormClosed({
+    if ($script:_bgTimer -and $script:_bgTimer.Enabled) { $script:_bgTimer.Stop() }
+    if ($script:_ps)  { try { $script:_ps.Dispose()  } catch {} }
+    if ($script:_rs)  { try { $script:_rs.Close()    } catch {} }
 })
 
 # ── Lanzar ────────────────────────────────────────────────────────────────────
