@@ -298,11 +298,11 @@ $script:installedVer = $null
 $form.Add_Shown({
     $script:installedVer = Get-InstalledVersion
     if ($script:installedVer) {
-        $lVer.Text      = "RustDesk $($script:installedVer) ya está instalado — se actualizará a la última versión."
+        $lVer.Text      = "RustDesk $($script:installedVer) detectado — solo se actualizará la configuración del servidor."
         $lVer.ForeColor = [Drawing.Color]::FromArgb(0, 128, 0)
-        $btnInst.Text   = "Actualizar"
+        $btnInst.Text   = "Configurar"
     } else {
-        $lVer.Text      = "RustDesk no está instalado — se descargará la última versión disponible."
+        $lVer.Text      = "RustDesk no está instalado — se descargará e instalará la última versión."
         $lVer.ForeColor = $clrMuted
     }
 })
@@ -344,170 +344,170 @@ $btnInst.Add_Click({
         function S { param($step, $det = "") $sh.Step = $step; $sh.Detail = $det }
         function P { param($p) $sh.Pct = $p }
 
+        $exePaths = @(
+            "$env:ProgramFiles\RustDesk\rustdesk.exe",
+            "${env:ProgramFiles(x86)}\RustDesk\rustdesk.exe",
+            "$env:LOCALAPPDATA\RustDesk\rustdesk.exe",
+            "$env:APPDATA\RustDesk\rustdesk.exe"
+        )
+        $cfgDir  = "$env:APPDATA\RustDesk\config"
+        $cfgFile = "$cfgDir\RustDesk.toml"
+        $version = ""
+        $dlDir   = $null
+
+        # Detectar si RustDesk ya está instalado
+        $uninstKeys = @(
+            "HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\*",
+            "HKLM:\Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\*",
+            "HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall\*"
+        )
+        $prevPkg = $null
+        foreach ($k in $uninstKeys) {
+            $prevPkg = Get-ItemProperty $k -EA SilentlyContinue |
+                Where-Object { $_.DisplayName -like "*RustDesk*" } |
+                Select-Object -First 1
+            if ($prevPkg) { break }
+        }
+        $exe = $exePaths | Where-Object { Test-Path $_ } | Select-Object -First 1
+        $yaInstalado = ($prevPkg -ne $null) -or ($exe -ne $null)
+
         try {
-            # ── 1. Buscar última versión ───────────────────────────────────
-            S "[1/5] Buscando última versión de RustDesk..."
-            P 4
-            L "Consultando GitHub API..."
+            if ($yaInstalado) {
+                # ══════════════════════════════════════════════════════════════
+                # MODO: solo configurar — no tocar la versión instalada
+                # ══════════════════════════════════════════════════════════════
+                if ($prevPkg) { $version = $prevPkg.DisplayVersion }
+                S "[1/2] Configurando servidor..."
+                P 15
+                L "RustDesk ya está instalado — solo se actualizará la configuración del servidor."
+                if ($version) { L "Versión instalada: $version" }
 
-            $rel = Invoke-RestMethod `
-                -Uri "https://api.github.com/repos/rustdesk/rustdesk/releases/latest" `
-                -Headers @{ "User-Agent" = "NF-RustDesk-Installer/2.0"; "Accept" = "application/vnd.github.v3+json" } `
-                -UseBasicParsing -TimeoutSec 30
+                L "Cerrando RustDesk..."
+                Get-Process "rustdesk" -EA SilentlyContinue | Stop-Process -Force -EA SilentlyContinue
+                Start-Sleep -Seconds 2
+                P 40
 
-            # Preferir MSI x86_64, luego cualquier MSI
-            $asset = $rel.assets | Where-Object { $_.name -match "x86_64.*\.msi$" } | Select-Object -First 1
-            if (-not $asset) { $asset = $rel.assets | Where-Object { $_.name -match "\.msi$" } | Select-Object -First 1 }
-            if (-not $asset) { throw "No se encontró el instalador MSI en el release de GitHub." }
+            } else {
+                # ══════════════════════════════════════════════════════════════
+                # MODO: instalación completa
+                # ══════════════════════════════════════════════════════════════
 
-            $dlUrl      = $asset.browser_download_url
-            $version    = $rel.tag_name
-            $totalBytes = [long]$asset.size
+                # ── 1/4. Buscar última versión ─────────────────────────────
+                S "[1/4] Buscando última versión de RustDesk..."
+                P 4
+                L "Consultando GitHub API..."
 
-            L "Versión disponible  : $version"
-            L "Tamaño del archivo  : $([Math]::Round($totalBytes / 1MB, 1)) MB"
-            L "URL                 : $dlUrl"
-            P 10
+                $rel = Invoke-RestMethod `
+                    -Uri "https://api.github.com/repos/rustdesk/rustdesk/releases/latest" `
+                    -Headers @{ "User-Agent" = "CB-RustDesk-Installer/2.0"; "Accept" = "application/vnd.github.v3+json" } `
+                    -UseBasicParsing -TimeoutSec 30
 
-            # ── 2. Descargar con progreso real por stream ──────────────────
-            S "[2/5] Descargando RustDesk $version..."
-            S "[2/5] Descargando RustDesk $version..." "Conectando..."
-            L "Iniciando descarga..."
+                $asset = $rel.assets | Where-Object { $_.name -match "x86_64.*\.msi$" } | Select-Object -First 1
+                if (-not $asset) { $asset = $rel.assets | Where-Object { $_.name -match "\.msi$" } | Select-Object -First 1 }
+                if (-not $asset) { throw "No se encontró el instalador MSI en el release de GitHub." }
 
-            $dlDir   = "$env:TEMP\rd_setup_$([guid]::NewGuid().ToString('N').Substring(0,6))"
-            $msiPath = "$dlDir\rustdesk.msi"
-            New-Item -ItemType Directory -Path $dlDir -Force | Out-Null
+                $dlUrl      = $asset.browser_download_url
+                $version    = $rel.tag_name
+                $totalBytes = [long]$asset.size
 
-            Add-Type -AssemblyName System.Net.Http
-            $http = New-Object System.Net.Http.HttpClient
-            $http.DefaultRequestHeaders.Add("User-Agent", "NF-RustDesk-Installer/2.0")
-            $http.Timeout = [TimeSpan]::FromMinutes(15)
+                L "Versión disponible  : $version"
+                L "Tamaño del archivo  : $([Math]::Round($totalBytes / 1MB, 1)) MB"
+                P 10
 
-            $resp = $http.GetAsync($dlUrl, [System.Net.Http.HttpCompletionOption]::ResponseHeadersRead).GetAwaiter().GetResult()
-            if (-not $resp.IsSuccessStatusCode) {
-                throw "Error HTTP $([int]$resp.StatusCode) al descargar el instalador."
-            }
+                # ── 2/4. Descargar ─────────────────────────────────────────
+                S "[2/4] Descargando RustDesk $version..." "Conectando..."
+                L "Iniciando descarga..."
 
-            $netStream  = $resp.Content.ReadAsStreamAsync().GetAwaiter().GetResult()
-            $fileStream = [IO.File]::OpenWrite($msiPath)
-            $buf        = New-Object byte[] 65536
-            $downloaded = [long]0
-            $lastLogMB  = [long]0
+                $dlDir   = "$env:TEMP\rd_setup_$([guid]::NewGuid().ToString('N').Substring(0,6))"
+                $msiPath = "$dlDir\rustdesk.msi"
+                New-Item -ItemType Directory -Path $dlDir -Force | Out-Null
 
-            while ($true) {
-                $n = $netStream.Read($buf, 0, $buf.Length)
-                if ($n -eq 0) { break }
-                $fileStream.Write($buf, 0, $n)
-                $downloaded += $n
+                Add-Type -AssemblyName System.Net.Http
+                $http = New-Object System.Net.Http.HttpClient
+                $http.DefaultRequestHeaders.Add("User-Agent", "CB-RustDesk-Installer/2.0")
+                $http.Timeout = [TimeSpan]::FromMinutes(15)
 
-                if ($totalBytes -gt 0) {
-                    $pct        = [Math]::Min(99, [int]($downloaded * 100 / $totalBytes))
-                    $sh.Pct    = 10 + [int]($pct * 0.37)   # mapea 0-100% → 10-47%
-                    $dlMB      = [Math]::Round($downloaded / 1MB, 1)
-                    $totMB     = [Math]::Round($totalBytes / 1MB, 1)
-                    $sh.Detail = "$dlMB MB de $totMB MB  ($pct%)"
-                    # Log cada ~10 MB
-                    if (($downloaded - $lastLogMB) -ge 10MB) {
-                        $lastLogMB = $downloaded
-                        L "  Descargado: $dlMB / $totMB MB"
+                $resp = $http.GetAsync($dlUrl, [System.Net.Http.HttpCompletionOption]::ResponseHeadersRead).GetAwaiter().GetResult()
+                if (-not $resp.IsSuccessStatusCode) {
+                    throw "Error HTTP $([int]$resp.StatusCode) al descargar el instalador."
+                }
+
+                $netStream  = $resp.Content.ReadAsStreamAsync().GetAwaiter().GetResult()
+                $fileStream = [IO.File]::OpenWrite($msiPath)
+                $buf        = New-Object byte[] 65536
+                $downloaded = [long]0
+                $lastLogMB  = [long]0
+
+                while ($true) {
+                    $n = $netStream.Read($buf, 0, $buf.Length)
+                    if ($n -eq 0) { break }
+                    $fileStream.Write($buf, 0, $n)
+                    $downloaded += $n
+                    if ($totalBytes -gt 0) {
+                        $pct       = [Math]::Min(99, [int]($downloaded * 100 / $totalBytes))
+                        $sh.Pct   = 10 + [int]($pct * 0.37)
+                        $dlMB     = [Math]::Round($downloaded / 1MB, 1)
+                        $totMB    = [Math]::Round($totalBytes / 1MB, 1)
+                        $sh.Detail = "$dlMB MB de $totMB MB  ($pct%)"
+                        if (($downloaded - $lastLogMB) -ge 10MB) {
+                            $lastLogMB = $downloaded
+                            L "  Descargado: $dlMB / $totMB MB"
+                        }
                     }
                 }
-            }
+                $fileStream.Close(); $netStream.Close(); $http.Dispose()
 
-            $fileStream.Close()
-            $netStream.Close()
-            $http.Dispose()
+                $sizeMB = [Math]::Round((Get-Item $msiPath).Length / 1MB, 1)
+                if ((Get-Item $msiPath).Length -lt 5MB) { throw "El archivo descargado parece incompleto ($sizeMB MB)." }
+                L "Descarga completa: $sizeMB MB"
+                P 50
+                S "[2/4] Descarga completa" "$sizeMB MB"
 
-            $sizeMB = [Math]::Round((Get-Item $msiPath).Length / 1MB, 1)
-            if ((Get-Item $msiPath).Length -lt 5MB) {
-                throw "El archivo descargado parece incompleto ($sizeMB MB)."
-            }
-            L "Descarga completa: $sizeMB MB"
-            P 50
-            S "[2/5] Descarga completa" "$sizeMB MB"
+                # ── 3/4. Instalar MSI ──────────────────────────────────────
+                S "[3/4] Instalando RustDesk $version..." "Puede tardar 1–3 minutos..."
+                P 54
+                L "Cerrando proceso rustdesk..."
+                Get-Process "rustdesk" -EA SilentlyContinue | Stop-Process -Force -EA SilentlyContinue
+                Start-Sleep -Seconds 2
+                L "Ejecutando instalador MSI (modo silencioso)..."
 
-            # ── 3. Detener y desinstalar versión anterior ──────────────────
-            S "[3/5] Preparando instalación..."
-            P 52
-            L "Cerrando proceso rustdesk..."
-            Get-Process "rustdesk" -EA SilentlyContinue | Stop-Process -Force -EA SilentlyContinue
-            Start-Sleep -Seconds 2
+                $msiLog = "$env:TEMP\rustdesk_install.log"
+                $proc   = Start-Process msiexec.exe `
+                    -ArgumentList "/i `"$msiPath`" /quiet /norestart /l*v `"$msiLog`"" `
+                    -Wait -PassThru
 
-            # Desinstalar versión previa para evitar error MSI 1603 en upgrades
-            $uninstKeys = @(
-                "HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\*",
-                "HKLM:\Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\*",
-                "HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall\*"
-            )
-            $prevPkg = $null
-            foreach ($k in $uninstKeys) {
-                $prevPkg = Get-ItemProperty $k -EA SilentlyContinue |
-                    Where-Object { $_.DisplayName -like "*RustDesk*" } |
-                    Select-Object -First 1
-                if ($prevPkg) { break }
-            }
-
-            if ($prevPkg) {
-                L "Versión anterior detectada: $($prevPkg.DisplayVersion) — desinstalando..."
-                $prodCode = [regex]::Match($prevPkg.UninstallString, '\{[A-F0-9-]{36}\}').Value
-                if ($prodCode) {
-                    $u = Start-Process msiexec.exe `
-                        -ArgumentList "/x `"$prodCode`" /quiet /norestart" `
-                        -Wait -PassThru
-                    L "Desinstalación completada (código: $($u.ExitCode))."
-                } else {
-                    L "  (No se pudo extraer el producto — se intentará upgrade directo)"
+                if ($proc.ExitCode -notin @(0, 1641, 3010)) {
+                    if (Test-Path $msiLog) {
+                        $tail = Get-Content $msiLog -Tail 8 -EA SilentlyContinue |
+                            Where-Object { $_ -match "error|value 3|return value" } |
+                            Select-Object -Last 3
+                        foreach ($tl in $tail) { L "  MSI: $tl" }
+                    }
+                    throw "El instalador MSI falló con código $($proc.ExitCode)."
                 }
-                Start-Sleep -Seconds 3
-            } else {
-                L "No hay versión anterior instalada."
+                L "Instalación correcta (código: $($proc.ExitCode))."
+                Remove-Item $msiLog -EA SilentlyContinue
+                P 80
+
+                # Actualizar ruta del exe tras la instalación
+                $exe = $exePaths | Where-Object { Test-Path $_ } | Select-Object -First 1
+
+                S "[4/4] Configurando servidor..."
+                P 83
             }
-            P 56
 
-            # ── 4. Instalar MSI ────────────────────────────────────────────
-            S "[4/5] Instalando RustDesk $version..." "Puede tardar 1–3 minutos, no cierres esta ventana..."
-            P 58
-            L "Ejecutando instalador MSI (modo silencioso)..."
-
-            $msiLog  = "$env:TEMP\rustdesk_install.log"
-            $proc = Start-Process msiexec.exe `
-                -ArgumentList "/i `"$msiPath`" /quiet /norestart /l*v `"$msiLog`"" `
-                -Wait -PassThru
-
-            # 0 = éxito, 1641/3010 = éxito + reinicio requerido
-            if ($proc.ExitCode -notin @(0, 1641, 3010)) {
-                # Mostrar las últimas líneas del log MSI para diagnóstico
-                if (Test-Path $msiLog) {
-                    $tail = Get-Content $msiLog -Tail 8 -EA SilentlyContinue |
-                        Where-Object { $_ -match "error|value 3|return value" } |
-                        Select-Object -Last 3
-                    foreach ($tl in $tail) { L "  MSI: $tl" }
-                }
-                throw "El instalador MSI falló con código $($proc.ExitCode)."
-            }
-            L "Instalación correcta (código: $($proc.ExitCode))."
-            Remove-Item $msiLog -EA SilentlyContinue
-            P 82
-
-            # ── 5. Configurar servidor ─────────────────────────────────────
-            S "[5/5] Configurando servidor de $cfgIdSrv..."
-            P 85
-            L "Escribiendo configuración..."
-
-            # Detener nuevamente por si el MSI lo inició al finalizar
+            # ══════════════════════════════════════════════════════════════════
+            # COMÚN: escribir configuración del servidor
+            # ══════════════════════════════════════════════════════════════════
+            L "Escribiendo configuración del servidor..."
             Get-Process "rustdesk" -EA SilentlyContinue | Stop-Process -Force -EA SilentlyContinue
             Start-Sleep -Seconds 1
 
-            $cfgDir  = "$env:APPDATA\RustDesk\config"
-            $cfgFile = "$cfgDir\RustDesk.toml"
             if (-not (Test-Path $cfgDir)) { New-Item -ItemType Directory $cfgDir -Force | Out-Null }
-
-            # Escribir TOML sin BOM (UTF-8 puro)
             $toml = "[network]`nrelay-server = `"$cfgRelaySrv`"`n`n[server]`nid = `"$cfgIdSrv`"`nkey = `"$cfgKey`""
             [IO.File]::WriteAllText($cfgFile, $toml, (New-Object Text.UTF8Encoding $false))
             L "TOML escrito en: $cfgFile"
 
-            # Redundancia: también configurar registro de Windows
             try {
                 $rk = "HKCU:\Software\RustDesk"
                 if (-not (Test-Path $rk)) { New-Item $rk -Force | Out-Null }
@@ -515,64 +515,52 @@ $btnInst.Add_Click({
                 Set-ItemProperty $rk "id-server"    $cfgIdSrv    -EA Stop
                 Set-ItemProperty $rk "key"           $cfgKey      -EA Stop
                 L "Registro HKCU:\Software\RustDesk configurado."
-            } catch {
-                L "  (Registro: omitido — OK)"
+            } catch { L "  (Registro: omitido — OK)" }
+
+            if ($dlDir) {
+                L "Limpiando temporales..."
+                Remove-Item $dlDir -Recurse -Force -EA SilentlyContinue
             }
 
             P 93
-            L "Limpiando temporales..."
-            Remove-Item $dlDir -Recurse -Force -EA SilentlyContinue
 
-            # ── Iniciar RustDesk y leer ID ─────────────────────────────────
-            L "Iniciando RustDesk..."
-            $exe = @(
-                "$env:ProgramFiles\RustDesk\rustdesk.exe",
-                "${env:ProgramFiles(x86)}\RustDesk\rustdesk.exe",
-                "$env:LOCALAPPDATA\RustDesk\rustdesk.exe",
-                "$env:APPDATA\RustDesk\rustdesk.exe"
-            ) | Where-Object { Test-Path $_ } | Select-Object -First 1
+            # ══════════════════════════════════════════════════════════════════
+            # COMÚN: iniciar RustDesk y obtener ID
+            # ══════════════════════════════════════════════════════════════════
+            if (-not $exe) { $exe = $exePaths | Where-Object { Test-Path $_ } | Select-Object -First 1 }
 
             if ($exe) {
                 Start-Process $exe -EA SilentlyContinue
-                L "RustDesk iniciado. Esperando conexión con servidor para obtener ID..."
+                L "RustDesk iniciado. Esperando ID..."
 
-                # Archivos de config donde RustDesk puede guardar el ID (varía por versión)
-                $cfgFiles = @(
-                    $cfgFile,
-                    ($cfgFile -replace 'RustDesk\.toml$', 'RustDesk2.toml')
-                )
-
+                $cfgFiles = @($cfgFile, ($cfgFile -replace 'RustDesk\.toml$', 'RustDesk2.toml'))
                 $deadline = (Get-Date).AddSeconds(30)
+
                 while ((Get-Date) -lt $deadline -and -not $sh.RdId) {
                     Start-Sleep -Milliseconds 1200
 
-                    # Método 1: rustdesk --get-id (v1.2+, más confiable)
+                    # Método 1: rustdesk --get-id
                     try {
                         $tmpId = "$env:TEMP\rdid_out.txt"
-                        $gp = Start-Process $exe -ArgumentList "--get-id" `
-                            -Wait -PassThru -WindowStyle Hidden `
+                        Start-Process $exe -ArgumentList "--get-id" -Wait -WindowStyle Hidden `
                             -RedirectStandardOutput $tmpId -EA SilentlyContinue
                         if (Test-Path $tmpId) {
                             $cliOut = (Get-Content $tmpId -Raw -EA SilentlyContinue).Trim()
                             Remove-Item $tmpId -EA SilentlyContinue
-                            if ($cliOut -match '^\d{6,12}$') {
-                                $sh.RdId = $cliOut
-                                L "ID obtenido (CLI): $($sh.RdId)"
-                            }
+                            if ($cliOut -match '^\d{6,12}$') { $sh.RdId = $cliOut; L "ID (CLI): $($sh.RdId)" }
                         }
                     } catch {}
 
                     if ($sh.RdId) { break }
 
-                    # Método 2: leer de los archivos de config
+                    # Método 2: leer archivos de config
                     foreach ($cf in $cfgFiles) {
                         if (-not (Test-Path $cf)) { continue }
                         try {
                             $raw = [IO.File]::ReadAllText($cf)
-                            # Buscar ID numérico entre comillas (excluye IPs con puntos)
                             foreach ($m in [regex]::Matches($raw, '"(\d{6,12})"')) {
                                 $sh.RdId = $m.Groups[1].Value
-                                L "ID obtenido (config): $($sh.RdId)"
+                                L "ID (config): $($sh.RdId)"
                                 break
                             }
                         } catch {}
@@ -580,15 +568,17 @@ $btnInst.Add_Click({
                     }
                 }
 
-                if (-not $sh.RdId) {
-                    L "  (El ID aparecerá en la app de RustDesk al conectarse al servidor)"
-                }
+                if (-not $sh.RdId) { L "  (El ID aparecerá en la app al conectarse al servidor)" }
             } else {
                 L "! rustdesk.exe no encontrado — inicialo desde el menú Inicio."
             }
 
             P 100
-            S "¡Completado!" "RustDesk $version instalado y listo para usar."
+            if ($yaInstalado) {
+                S "¡Configurado!" "Servidor actualizado. Versión instalada: $version"
+            } else {
+                S "¡Completado!" "RustDesk $version instalado y listo para usar."
+            }
             L "─────────────────── COMPLETADO ───────────────────"
             $sh.Success = $true
 
