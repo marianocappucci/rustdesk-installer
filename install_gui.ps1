@@ -426,13 +426,42 @@ $btnInst.Add_Click({
             P 50
             S "[2/5] Descarga completa" "$sizeMB MB"
 
-            # ── 3. Detener RustDesk si está corriendo ──────────────────────
-            S "[3/5] Deteniendo RustDesk..."
+            # ── 3. Detener y desinstalar versión anterior ──────────────────
+            S "[3/5] Preparando instalación..."
             P 52
             L "Cerrando proceso rustdesk..."
             Get-Process "rustdesk" -EA SilentlyContinue | Stop-Process -Force -EA SilentlyContinue
             Start-Sleep -Seconds 2
-            L "Proceso detenido."
+
+            # Desinstalar versión previa para evitar error MSI 1603 en upgrades
+            $uninstKeys = @(
+                "HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\*",
+                "HKLM:\Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\*",
+                "HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall\*"
+            )
+            $prevPkg = $null
+            foreach ($k in $uninstKeys) {
+                $prevPkg = Get-ItemProperty $k -EA SilentlyContinue |
+                    Where-Object { $_.DisplayName -like "*RustDesk*" } |
+                    Select-Object -First 1
+                if ($prevPkg) { break }
+            }
+
+            if ($prevPkg) {
+                L "Versión anterior detectada: $($prevPkg.DisplayVersion) — desinstalando..."
+                $prodCode = [regex]::Match($prevPkg.UninstallString, '\{[A-F0-9-]{36}\}').Value
+                if ($prodCode) {
+                    $u = Start-Process msiexec.exe `
+                        -ArgumentList "/x `"$prodCode`" /quiet /norestart" `
+                        -Wait -PassThru
+                    L "Desinstalación completada (código: $($u.ExitCode))."
+                } else {
+                    L "  (No se pudo extraer el producto — se intentará upgrade directo)"
+                }
+                Start-Sleep -Seconds 3
+            } else {
+                L "No hay versión anterior instalada."
+            }
             P 56
 
             # ── 4. Instalar MSI ────────────────────────────────────────────
@@ -440,15 +469,24 @@ $btnInst.Add_Click({
             P 58
             L "Ejecutando instalador MSI (modo silencioso)..."
 
+            $msiLog  = "$env:TEMP\rustdesk_install.log"
             $proc = Start-Process msiexec.exe `
-                -ArgumentList "/i `"$msiPath`" /quiet /norestart ALLUSERS=1" `
+                -ArgumentList "/i `"$msiPath`" /quiet /norestart /l*v `"$msiLog`"" `
                 -Wait -PassThru
 
-            # 0 = éxito, 1641 = éxito + pendiente de reinicio, 3010 = éxito + reinicio necesario
+            # 0 = éxito, 1641/3010 = éxito + reinicio requerido
             if ($proc.ExitCode -notin @(0, 1641, 3010)) {
+                # Mostrar las últimas líneas del log MSI para diagnóstico
+                if (Test-Path $msiLog) {
+                    $tail = Get-Content $msiLog -Tail 8 -EA SilentlyContinue |
+                        Where-Object { $_ -match "error|value 3|return value" } |
+                        Select-Object -Last 3
+                    foreach ($tl in $tail) { L "  MSI: $tl" }
+                }
                 throw "El instalador MSI falló con código $($proc.ExitCode)."
             }
             L "Instalación correcta (código: $($proc.ExitCode))."
+            Remove-Item $msiLog -EA SilentlyContinue
             P 82
 
             # ── 5. Configurar servidor ─────────────────────────────────────
