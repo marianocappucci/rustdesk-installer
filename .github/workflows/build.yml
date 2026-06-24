@@ -4,7 +4,7 @@ on:
   push:
     branches: [main]
     paths:
-      - install_simple.ps1
+      - install_gui.ps1
   workflow_dispatch:
 
 permissions:
@@ -24,24 +24,24 @@ jobs:
           Set-PSRepository PSGallery -InstallationPolicy Trusted
           Install-Module -Name PS2EXE -Force -Scope CurrentUser
 
-      - name: Compilar PS1 a EXE
+      - name: Compilar install_gui.ps1 a EXE
         shell: powershell
         run: |
           Import-Module PS2EXE
           Invoke-PS2EXE `
-            -InputFile  "install_simple.ps1" `
-            -OutputFile "instalar_rustdesk.exe" `
+            -InputFile   "install_gui.ps1" `
+            -OutputFile  "instalar_rustdesk.exe" `
             -Title       "Instalador RustDesk - NeuroFlow" `
             -Description "Instala y configura RustDesk automaticamente" `
             -Company     "NeuroFlow" `
-            -Version     "1.0.0.0" `
-            -requireAdmin
+            -Version     "2.0.0.0" `
+            -requireAdmin `
+            -NoConsole
 
           if (-not (Test-Path "instalar_rustdesk.exe")) {
-            Write-Error "Compilacion fallida: no se genero el EXE"
+            Write-Error "Compilación fallida: no se generó el EXE"
             exit 1
           }
-
           $kb = [Math]::Round((Get-Item "instalar_rustdesk.exe").Length / 1KB, 0)
           Write-Host "EXE generado correctamente ($kb KB)"
 
@@ -49,17 +49,26 @@ jobs:
         uses: ncipollo/release-action@v1
         with:
           tag: latest-installer
-          name: Instalador RustDesk - NeuroFlow
+          name: "Instalador RustDesk — NeuroFlow v2.0"
           body: |
-            ## Instalador RustDesk - NeuroFlow
+            ## Instalador RustDesk — NeuroFlow
 
-            ### Como instalar
-            1. Descarga **instalar_rustdesk.exe** (boton de abajo)
+            ### Cómo instalar
+            1. Descargá **instalar_rustdesk.exe** (botón de abajo)
             2. Doble clic para ejecutar
-            3. Acepta la ventana de seguridad de Windows (UAC)
-            4. Espera que finalice la instalacion (3-5 minutos)
+            3. Aceptá la ventana de seguridad de Windows (UAC)
+            4. Leé el aviso de seguridad y marcá la casilla de confirmación
+            5. Hacé clic en **Instalar** y esperá 3-5 minutos
 
-            RustDesk se instala y configura automaticamente con el servidor de NeuroFlow.
+            RustDesk se instala y configura automáticamente con el servidor de NeuroFlow.
+            Al terminar, el instalador mostrará tu **ID de RustDesk** para compartir con el técnico.
+
+            ### Novedades v2.0
+            - Interfaz gráfica con progreso de descarga en tiempo real
+            - Aviso de seguridad: solo instalar si un técnico lo solicitó
+            - Detecta si hay una versión instalada y la actualiza
+            - Muestra el ID de RustDesk al finalizar
+            - Configuración via TOML y registro de Windows (mayor confiabilidad)
           artifacts: instalar_rustdesk.exe
           allowUpdates: true
           makeLatest: true
