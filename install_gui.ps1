@@ -534,22 +534,55 @@ $btnInst.Add_Click({
 
             if ($exe) {
                 Start-Process $exe -EA SilentlyContinue
-                L "RustDesk iniciado."
+                L "RustDesk iniciado. Esperando conexión con servidor para obtener ID..."
 
-                # Esperar hasta 12 seg a que genere el ID en el TOML
-                $deadline = (Get-Date).AddSeconds(12)
-                while ((Get-Date) -lt $deadline) {
-                    Start-Sleep -Milliseconds 800
-                    if (Test-Path $cfgFile) {
-                        $c = [IO.File]::ReadAllText($cfgFile)
-                        if ($c -match 'id\s*=\s*["\x27]?(\d{6,12})["\x27]?') {
-                            $sh.RdId = $matches[1]
-                            L "ID de RustDesk detectado: $($sh.RdId)"
-                            break
+                # Archivos de config donde RustDesk puede guardar el ID (varía por versión)
+                $cfgFiles = @(
+                    $cfgFile,
+                    ($cfgFile -replace 'RustDesk\.toml$', 'RustDesk2.toml')
+                )
+
+                $deadline = (Get-Date).AddSeconds(30)
+                while ((Get-Date) -lt $deadline -and -not $sh.RdId) {
+                    Start-Sleep -Milliseconds 1200
+
+                    # Método 1: rustdesk --get-id (v1.2+, más confiable)
+                    try {
+                        $tmpId = "$env:TEMP\rdid_out.txt"
+                        $gp = Start-Process $exe -ArgumentList "--get-id" `
+                            -Wait -PassThru -WindowStyle Hidden `
+                            -RedirectStandardOutput $tmpId -EA SilentlyContinue
+                        if (Test-Path $tmpId) {
+                            $cliOut = (Get-Content $tmpId -Raw -EA SilentlyContinue).Trim()
+                            Remove-Item $tmpId -EA SilentlyContinue
+                            if ($cliOut -match '^\d{6,12}$') {
+                                $sh.RdId = $cliOut
+                                L "ID obtenido (CLI): $($sh.RdId)"
+                            }
                         }
+                    } catch {}
+
+                    if ($sh.RdId) { break }
+
+                    # Método 2: leer de los archivos de config
+                    foreach ($cf in $cfgFiles) {
+                        if (-not (Test-Path $cf)) { continue }
+                        try {
+                            $raw = [IO.File]::ReadAllText($cf)
+                            # Buscar ID numérico entre comillas (excluye IPs con puntos)
+                            foreach ($m in [regex]::Matches($raw, '"(\d{6,12})"')) {
+                                $sh.RdId = $m.Groups[1].Value
+                                L "ID obtenido (config): $($sh.RdId)"
+                                break
+                            }
+                        } catch {}
+                        if ($sh.RdId) { break }
                     }
                 }
-                if (-not $sh.RdId) { L "  (El ID aparecerá en la app de RustDesk)" }
+
+                if (-not $sh.RdId) {
+                    L "  (El ID aparecerá en la app de RustDesk al conectarse al servidor)"
+                }
             } else {
                 L "! rustdesk.exe no encontrado — inicialo desde el menú Inicio."
             }
