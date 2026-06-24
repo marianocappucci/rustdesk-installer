@@ -18,7 +18,7 @@ Add-Type -AssemblyName System.Drawing
 $CFG_ID_SERVER    = "149.50.136.218"
 $CFG_RELAY_SERVER = "149.50.136.218"
 $CFG_SERVER_KEY   = "e0wsBkM2RcYOdy2mDeI82FogAgkhTQePyKXZlyGPr8g="
-$CFG_COMPANY      = "NeuroFlow"
+$CFG_COMPANY      = "Compulibra"
 
 # ── Paleta ────────────────────────────────────────────────────────────────────
 $clrBlue   = [Drawing.Color]::FromArgb(0, 120, 215)
@@ -82,7 +82,7 @@ function Get-InstalledVersion {
 # ── Formulario principal ───────────────────────────────────────────────────────
 $form = New-Object Windows.Forms.Form
 $form.Text            = "Soporte Remoto — $CFG_COMPANY"
-$form.ClientSize      = New-Object Drawing.Size(520, 564)
+$form.ClientSize      = New-Object Drawing.Size(520, 582)
 $form.StartPosition   = "CenterScreen"
 $form.FormBorderStyle = "FixedDialog"
 $form.MaximizeBox     = $false
@@ -104,7 +104,7 @@ $form.Controls.Add($hdr)
 # ── Contenedor de pantallas ───────────────────────────────────────────────────
 $main = New-Object Windows.Forms.Panel
 $main.Location = New-Object Drawing.Point(0, 72)
-$main.Size     = New-Object Drawing.Size(520, 492)
+$main.Size     = New-Object Drawing.Size(520, 510)
 $form.Controls.Add($main)
 
 # ════════════════════════════════════════════════════════════════════════════════
@@ -116,7 +116,7 @@ $pW.Dock = "Fill"
 # Bloque: ¿Qué se instalará?
 $cardExp = New-Object Windows.Forms.Panel
 $cardExp.Location    = New-Object Drawing.Point(14, 12)
-$cardExp.Size        = New-Object Drawing.Size(492, 82)
+$cardExp.Size        = New-Object Drawing.Size(492, 100)
 $cardExp.BackColor   = $clrWhite
 $cardExp.BorderStyle = "FixedSingle"
 $cardExp.Controls.Add((New-Label "¿Qué se instalará?" $fH2 $clrText 12 10))
@@ -125,12 +125,12 @@ $lExpBody.Text     = "RustDesk es una herramienta de acceso remoto que permite a
 $lExpBody.Font     = $fBody
 $lExpBody.ForeColor = $clrText
 $lExpBody.Location = New-Object Drawing.Point(12, 35)
-$lExpBody.Size     = New-Object Drawing.Size(466, 38)
+$lExpBody.Size     = New-Object Drawing.Size(466, 56)
 $cardExp.Controls.Add($lExpBody)
 
 # Bloque: ¿Qué hará exactamente?
 $cardDo = New-Object Windows.Forms.Panel
-$cardDo.Location    = New-Object Drawing.Point(14, 103)
+$cardDo.Location    = New-Object Drawing.Point(14, 121)
 $cardDo.Size        = New-Object Drawing.Size(492, 90)
 $cardDo.BackColor   = [Drawing.Color]::FromArgb(240, 248, 255)
 $cardDo.BorderStyle = "FixedSingle"
@@ -145,7 +145,7 @@ $cardDo.Controls.Add($lDoBody)
 
 # Bloque: Aviso de seguridad
 $cardWarn = New-Object Windows.Forms.Panel
-$cardWarn.Location    = New-Object Drawing.Point(14, 202)
+$cardWarn.Location    = New-Object Drawing.Point(14, 220)
 $cardWarn.Size        = New-Object Drawing.Size(492, 122)
 $cardWarn.BackColor   = [Drawing.Color]::FromArgb(255, 248, 228)
 $cardWarn.BorderStyle = "FixedSingle"
@@ -170,22 +170,22 @@ $cardWarn.Controls.Add($lWBody)
 $sep = New-Object Windows.Forms.Label
 $sep.BorderStyle = "Fixed3D"
 $sep.Height = 2; $sep.Width = 490
-$sep.Location = New-Object Drawing.Point(14, 334)
+$sep.Location = New-Object Drawing.Point(14, 352)
 
 # Checkbox de confirmación
 $chk = New-Object Windows.Forms.CheckBox
 $chk.Text     = "Un técnico de $CFG_COMPANY me pidió instalar este programa"
 $chk.Font     = $fBold
-$chk.Location = New-Object Drawing.Point(14, 344)
+$chk.Location = New-Object Drawing.Point(14, 362)
 $chk.Size     = New-Object Drawing.Size(492, 28)
 
 # Etiqueta de versión detectada
-$lVer = New-Label "Verificando versión instalada..." $fSm $clrMuted 14 382 492 22
+$lVer = New-Label "Verificando versión instalada..." $fSm $clrMuted 14 400 492 22
 
 # Botones
 $btnCnl = New-Object Windows.Forms.Button
 $btnCnl.Text      = "Cancelar"
-$btnCnl.Location  = New-Object Drawing.Point(14, 444)
+$btnCnl.Location  = New-Object Drawing.Point(14, 462)
 $btnCnl.Size      = New-Object Drawing.Size(110, 38)
 $btnCnl.FlatStyle = "Flat"
 $btnCnl.BackColor = $clrWhite
@@ -194,7 +194,7 @@ $btnCnl.FlatAppearance.BorderColor = [Drawing.Color]::FromArgb(180, 180, 180)
 
 $btnInst = New-Object Windows.Forms.Button
 $btnInst.Text      = "Instalar"
-$btnInst.Location  = New-Object Drawing.Point(396, 444)
+$btnInst.Location  = New-Object Drawing.Point(396, 462)
 $btnInst.Size      = New-Object Drawing.Size(110, 38)
 $btnInst.FlatStyle = "Flat"
 $btnInst.BackColor = [Drawing.Color]::FromArgb(160, 160, 160)

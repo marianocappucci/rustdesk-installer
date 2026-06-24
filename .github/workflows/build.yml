@@ -31,9 +31,9 @@ jobs:
           Invoke-PS2EXE `
             -InputFile   "install_gui.ps1" `
             -OutputFile  "instalar_rustdesk.exe" `
-            -Title       "Instalador RustDesk - NeuroFlow" `
+            -Title       "Instalador RustDesk - Compulibra" `
             -Description "Instala y configura RustDesk automaticamente" `
-            -Company     "NeuroFlow" `
+            -Company     "Compulibra" `
             -Version     "2.0.0.0" `
             -requireAdmin `
             -NoConsole
@@ -49,9 +49,9 @@ jobs:
         uses: ncipollo/release-action@v1
         with:
           tag: latest-installer
-          name: "Instalador RustDesk — NeuroFlow v2.0"
+          name: "Instalador RustDesk — Compulibra v2.0"
           body: |
-            ## Instalador RustDesk — NeuroFlow
+            ## Instalador RustDesk — Compulibra
 
             ### Cómo instalar
             1. Descargá **instalar_rustdesk.exe** (botón de abajo)
@@ -60,7 +60,7 @@ jobs:
             4. Leé el aviso de seguridad y marcá la casilla de confirmación
             5. Hacé clic en **Instalar** y esperá 3-5 minutos
 
-            RustDesk se instala y configura automáticamente con el servidor de NeuroFlow.
+            RustDesk se instala y configura automáticamente con el servidor de Compulibra.
             Al terminar, el instalador mostrará tu **ID de RustDesk** para compartir con el técnico.
 
             ### Novedades v2.0
