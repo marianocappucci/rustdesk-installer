@@ -34,7 +34,7 @@ jobs:
             -Title       "Instalador RustDesk - Compulibra" `
             -Description "Instala y configura RustDesk automaticamente" `
             -Company     "Compulibra" `
-            -Version     "2.0.0.0" `
+            -Version     "2.1.0.0" `
             -requireAdmin `
             -NoConsole
 
@@ -49,7 +49,7 @@ jobs:
         uses: ncipollo/release-action@v1
         with:
           tag: latest-installer
-          name: "Instalador RustDesk — Compulibra v2.0"
+          name: "Instalador RustDesk — Compulibra v2.1"
           body: |
             ## Instalador RustDesk — Compulibra
 
@@ -63,12 +63,16 @@ jobs:
             RustDesk se instala y configura automáticamente con el servidor de Compulibra.
             Al terminar, el instalador mostrará tu **ID de RustDesk** para compartir con el técnico.
 
-            ### Novedades v2.0
+            ### Novedades v2.1
+            - Corrige configuración del servidor en instalaciones nuevas
+            - Escribe RustDesk2.toml (formato requerido por RustDesk 1.2+)
+            - Corrige campo `relay` en RustDesk.toml (era `relay-server`, incorrecto)
+
+            ### v2.0
             - Interfaz gráfica con progreso de descarga en tiempo real
             - Aviso de seguridad: solo instalar si un técnico lo solicitó
             - Detecta si hay una versión instalada y la actualiza
             - Muestra el ID de RustDesk al finalizar
-            - Configuración via TOML y registro de Windows (mayor confiabilidad)
           artifacts: instalar_rustdesk.exe
           allowUpdates: true
           makeLatest: true

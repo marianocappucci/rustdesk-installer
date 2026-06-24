@@ -504,9 +504,17 @@ $btnInst.Add_Click({
             Start-Sleep -Seconds 1
 
             if (-not (Test-Path $cfgDir)) { New-Item -ItemType Directory $cfgDir -Force | Out-Null }
-            $toml = "[network]`nrelay-server = `"$cfgRelaySrv`"`n`n[server]`nid = `"$cfgIdSrv`"`nkey = `"$cfgKey`""
-            [IO.File]::WriteAllText($cfgFile, $toml, (New-Object Text.UTF8Encoding $false))
-            L "TOML escrito en: $cfgFile"
+
+            # RustDesk.toml — formato clásico (RustDesk < 1.2)
+            $toml1 = "[network]`nrelay = `"$cfgRelaySrv`"`n`n[server]`nid = `"$cfgIdSrv`"`nkey = `"$cfgKey`""
+            [IO.File]::WriteAllText($cfgFile, $toml1, (New-Object Text.UTF8Encoding $false))
+            L "RustDesk.toml escrito en: $cfgFile"
+
+            # RustDesk2.toml — formato moderno (RustDesk 1.2+)
+            $cfgFile2 = $cfgFile -replace 'RustDesk\.toml$', 'RustDesk2.toml'
+            $toml2 = "[options]`ncustom-rendezvous-server = `"$cfgIdSrv`"`nrelay-server = `"$cfgRelaySrv`"`nkey = `"$cfgKey`""
+            [IO.File]::WriteAllText($cfgFile2, $toml2, (New-Object Text.UTF8Encoding $false))
+            L "RustDesk2.toml escrito en: $cfgFile2"
 
             try {
                 $rk = "HKCU:\Software\RustDesk"
