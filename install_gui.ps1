@@ -525,6 +525,37 @@ $btnInst.Add_Click({
                 L "Registro HKCU:\Software\RustDesk configurado."
             } catch { L "  (Registro: omitido — OK)" }
 
+            # ══════════════════════════════════════════════════════════════════
+            # COMÚN: escribir configuración también para el servicio (cuenta SYSTEM)
+            # El instalador MSI registra un servicio "RustDesk" que corre como SYSTEM
+            # y arranca en cada boot. Si no tiene esta config, usa la de fábrica y
+            # la GUI la hereda al reconectarse — por eso "se resetea" tras reiniciar.
+            # ══════════════════════════════════════════════════════════════════
+            try {
+                $sysCfgDir = "$env:SystemRoot\System32\config\systemprofile\AppData\Roaming\RustDesk\config"
+                if (-not (Test-Path $sysCfgDir)) { New-Item -ItemType Directory $sysCfgDir -Force | Out-Null }
+                [IO.File]::WriteAllText("$sysCfgDir\RustDesk.toml",  $toml1, (New-Object Text.UTF8Encoding $false))
+                [IO.File]::WriteAllText("$sysCfgDir\RustDesk2.toml", $toml2, (New-Object Text.UTF8Encoding $false))
+                L "Config del servicio (SYSTEM) escrita en: $sysCfgDir"
+            } catch { L "  (Config de SYSTEM: omitida — $_)" }
+
+            try {
+                $rkLm = "HKLM:\Software\RustDesk"
+                if (-not (Test-Path $rkLm)) { New-Item $rkLm -Force | Out-Null }
+                Set-ItemProperty $rkLm "relay-server" $cfgRelaySrv -EA Stop
+                Set-ItemProperty $rkLm "id-server"    $cfgIdSrv    -EA Stop
+                Set-ItemProperty $rkLm "key"           $cfgKey      -EA Stop
+                L "Registro HKLM:\Software\RustDesk configurado."
+            } catch { L "  (Registro HKLM: omitido — OK)" }
+
+            try {
+                $svc = Get-Service -Name "RustDesk" -EA SilentlyContinue
+                if ($svc) {
+                    Restart-Service -Name "RustDesk" -Force -EA Stop
+                    L "Servicio RustDesk reiniciado — config del servicio aplicada."
+                }
+            } catch { L "  (No se pudo reiniciar el servicio RustDesk: $_)" }
+
             if ($dlDir) {
                 L "Limpiando temporales..."
                 Remove-Item $dlDir -Recurse -Force -EA SilentlyContinue

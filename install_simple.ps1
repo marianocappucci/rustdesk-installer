@@ -267,7 +267,44 @@ key = "$serverKey"
 "@
 
 $configContent | Out-File -FilePath $configFile -Encoding UTF8 -Force
+
+# RustDesk2.toml - formato moderno (RustDesk 1.2+)
+$configFile2 = "$rustdeskConfig\RustDesk2.toml"
+$configContent2 = @"
+[options]
+custom-rendezvous-server = "$idServer"
+relay-server = "$relayServer"
+key = "$serverKey"
+"@
+$configContent2 | Out-File -FilePath $configFile2 -Encoding UTF8 -Force
+
 Write-Host "  [OK] Configuracion guardada" -ForegroundColor Green
+
+# ─────────────────────────────────────────────
+# Config tambien para el servicio (cuenta SYSTEM)
+# El instalador MSI registra un servicio "RustDesk" que corre como SYSTEM
+# y arranca en cada boot. Si no tiene esta config, usa la de fabrica y la
+# GUI la hereda al reconectarse - por eso "se resetea" tras reiniciar.
+# ─────────────────────────────────────────────
+try {
+    $sysCfgDir = "$env:SystemRoot\System32\config\systemprofile\AppData\Roaming\RustDesk\config"
+    if (-not (Test-Path $sysCfgDir)) { New-Item -ItemType Directory $sysCfgDir -Force | Out-Null }
+    $configContent  | Out-File -FilePath "$sysCfgDir\RustDesk.toml"  -Encoding UTF8 -Force
+    $configContent2 | Out-File -FilePath "$sysCfgDir\RustDesk2.toml" -Encoding UTF8 -Force
+    Write-Host "  [OK] Configuracion del servicio (SYSTEM) guardada" -ForegroundColor Green
+} catch {
+    Write-Host "  [!] No se pudo escribir la config de SYSTEM: $_" -ForegroundColor Yellow
+}
+
+try {
+    $svc = Get-Service -Name "RustDesk" -ErrorAction SilentlyContinue
+    if ($svc) {
+        Restart-Service -Name "RustDesk" -Force -ErrorAction Stop
+        Write-Host "  [OK] Servicio RustDesk reiniciado" -ForegroundColor Green
+    }
+} catch {
+    Write-Host "  [!] No se pudo reiniciar el servicio RustDesk: $_" -ForegroundColor Yellow
+}
 Write-Host ""
 
 # ─────────────────────────────────────────────
