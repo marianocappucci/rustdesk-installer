@@ -65,6 +65,14 @@ if (-not (Test-Path $rustdeskConfig)) {
 # ============================================================
 Write-Host "[*] Actualizando archivo de configuración..." -ForegroundColor Yellow
 
+# Detener el servicio ANTES de escribir: si queda corriendo, RustDesk
+# regenera RustDesk2.toml con valores vacios apenas lo detecta modificado.
+$svc = Get-Service -Name "RustDesk" -ErrorAction SilentlyContinue
+if ($svc -and $svc.Status -eq 'Running') {
+    try { Stop-Service -Name "RustDesk" -Force -ErrorAction Stop } catch {}
+    Start-Sleep -Seconds 1
+}
+
 $configContent = @"
 # Configuración de RustDesk
 # Actualizado: $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss')
@@ -93,29 +101,29 @@ $configContent2 | Out-File -FilePath $configFile2 -Encoding UTF8 -Force
 Write-Host "[✓] Archivo actualizado: $configFile`n" -ForegroundColor Green
 
 # ============================================================
-# 4b. CONFIG TAMBIEN PARA EL SERVICIO (cuenta SYSTEM)
+# 4b. CONFIG TAMBIEN PARA EL SERVICIO (cuenta LocalService)
 # ============================================================
-# El instalador MSI registra un servicio "RustDesk" que corre como SYSTEM
-# y arranca en cada boot. Si no tiene esta config, usa la de fabrica y la
-# GUI la hereda al reconectarse - por eso "se resetea" tras reiniciar.
+# El instalador MSI registra un servicio "RustDesk" que corre como
+# NT AUTHORITY\LocalService y arranca en cada boot. Su config vive en el
+# perfil de esa cuenta de servicio, no en %APPDATA% del usuario. Confirmado
+# por RustDesk: https://github.com/rustdesk/rustdesk/issues/769#issuecomment-1154947431
 try {
-    $sysCfgDir = "$env:SystemRoot\System32\config\systemprofile\AppData\Roaming\RustDesk\config"
+    $sysCfgDir = "$env:SystemRoot\ServiceProfiles\LocalService\AppData\Roaming\RustDesk\config"
     if (-not (Test-Path $sysCfgDir)) { New-Item -ItemType Directory -Path $sysCfgDir -Force | Out-Null }
     $configContent  | Out-File -FilePath "$sysCfgDir\RustDesk.toml"  -Encoding UTF8 -Force
     $configContent2 | Out-File -FilePath "$sysCfgDir\RustDesk2.toml" -Encoding UTF8 -Force
-    Write-Host "[✓] Configuración del servicio (SYSTEM) guardada`n" -ForegroundColor Green
+    Write-Host "[✓] Configuración del servicio (LocalService) guardada`n" -ForegroundColor Green
 } catch {
-    Write-Host "[!] No se pudo escribir la config de SYSTEM: $_`n" -ForegroundColor Yellow
+    Write-Host "[!] No se pudo escribir la config del servicio: $_`n" -ForegroundColor Yellow
 }
 
-try {
-    $svc = Get-Service -Name "RustDesk" -ErrorAction SilentlyContinue
-    if ($svc) {
-        Restart-Service -Name "RustDesk" -Force -ErrorAction Stop
-        Write-Host "[✓] Servicio RustDesk reiniciado`n" -ForegroundColor Green
+if ($svc) {
+    try {
+        Start-Service -Name "RustDesk" -ErrorAction Stop
+        Write-Host "[✓] Servicio RustDesk iniciado con la config nueva`n" -ForegroundColor Green
+    } catch {
+        Write-Host "[!] No se pudo iniciar el servicio RustDesk: $_`n" -ForegroundColor Yellow
     }
-} catch {
-    Write-Host "[!] No se pudo reiniciar el servicio RustDesk: $_`n" -ForegroundColor Yellow
 }
 
 # ============================================================

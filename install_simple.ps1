@@ -257,6 +257,14 @@ if (-not (Test-Path $rustdeskConfig)) {
     New-Item -ItemType Directory -Path $rustdeskConfig -Force | Out-Null
 }
 
+# Detener el servicio ANTES de escribir: si queda corriendo, RustDesk
+# regenera RustDesk2.toml con valores vacios apenas lo detecta modificado.
+$svc = Get-Service -Name "RustDesk" -ErrorAction SilentlyContinue
+if ($svc -and $svc.Status -eq 'Running') {
+    try { Stop-Service -Name "RustDesk" -Force -ErrorAction Stop } catch {}
+    Start-Sleep -Seconds 1
+}
+
 $configContent = @"
 [network]
 relay = "$relayServer"
@@ -281,29 +289,29 @@ $configContent2 | Out-File -FilePath $configFile2 -Encoding UTF8 -Force
 Write-Host "  [OK] Configuracion guardada" -ForegroundColor Green
 
 # ─────────────────────────────────────────────
-# Config tambien para el servicio (cuenta SYSTEM)
-# El instalador MSI registra un servicio "RustDesk" que corre como SYSTEM
-# y arranca en cada boot. Si no tiene esta config, usa la de fabrica y la
-# GUI la hereda al reconectarse - por eso "se resetea" tras reiniciar.
+# Config tambien para el servicio (cuenta LocalService)
+# El instalador MSI registra un servicio "RustDesk" que corre como
+# NT AUTHORITY\LocalService y arranca en cada boot. Su config vive en el
+# perfil de esa cuenta de servicio, no en %APPDATA% del usuario. Confirmado
+# por RustDesk: https://github.com/rustdesk/rustdesk/issues/769#issuecomment-1154947431
 # ─────────────────────────────────────────────
 try {
-    $sysCfgDir = "$env:SystemRoot\System32\config\systemprofile\AppData\Roaming\RustDesk\config"
+    $sysCfgDir = "$env:SystemRoot\ServiceProfiles\LocalService\AppData\Roaming\RustDesk\config"
     if (-not (Test-Path $sysCfgDir)) { New-Item -ItemType Directory $sysCfgDir -Force | Out-Null }
     $configContent  | Out-File -FilePath "$sysCfgDir\RustDesk.toml"  -Encoding UTF8 -Force
     $configContent2 | Out-File -FilePath "$sysCfgDir\RustDesk2.toml" -Encoding UTF8 -Force
-    Write-Host "  [OK] Configuracion del servicio (SYSTEM) guardada" -ForegroundColor Green
+    Write-Host "  [OK] Configuracion del servicio (LocalService) guardada" -ForegroundColor Green
 } catch {
-    Write-Host "  [!] No se pudo escribir la config de SYSTEM: $_" -ForegroundColor Yellow
+    Write-Host "  [!] No se pudo escribir la config del servicio: $_" -ForegroundColor Yellow
 }
 
-try {
-    $svc = Get-Service -Name "RustDesk" -ErrorAction SilentlyContinue
-    if ($svc) {
-        Restart-Service -Name "RustDesk" -Force -ErrorAction Stop
-        Write-Host "  [OK] Servicio RustDesk reiniciado" -ForegroundColor Green
+if ($svc) {
+    try {
+        Start-Service -Name "RustDesk" -ErrorAction Stop
+        Write-Host "  [OK] Servicio RustDesk iniciado con la config nueva" -ForegroundColor Green
+    } catch {
+        Write-Host "  [!] No se pudo iniciar el servicio RustDesk: $_" -ForegroundColor Yellow
     }
-} catch {
-    Write-Host "  [!] No se pudo reiniciar el servicio RustDesk: $_" -ForegroundColor Yellow
 }
 Write-Host ""
 

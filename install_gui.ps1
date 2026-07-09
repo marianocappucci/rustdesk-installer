@@ -501,6 +501,14 @@ $btnInst.Add_Click({
             # ══════════════════════════════════════════════════════════════════
             L "Escribiendo configuración del servidor..."
             Get-Process "rustdesk" -EA SilentlyContinue | Stop-Process -Force -EA SilentlyContinue
+
+            # Detener el servicio ANTES de escribir: si queda corriendo, RustDesk
+            # regenera RustDesk2.toml con valores vacíos apenas lo detecta modificado.
+            $svc = Get-Service -Name "RustDesk" -EA SilentlyContinue
+            if ($svc -and $svc.Status -eq 'Running') {
+                try { Stop-Service -Name "RustDesk" -Force -EA Stop; L "Servicio RustDesk detenido." }
+                catch { L "  (No se pudo detener el servicio RustDesk: $_)" }
+            }
             Start-Sleep -Seconds 1
 
             if (-not (Test-Path $cfgDir)) { New-Item -ItemType Directory $cfgDir -Force | Out-Null }
@@ -526,18 +534,20 @@ $btnInst.Add_Click({
             } catch { L "  (Registro: omitido — OK)" }
 
             # ══════════════════════════════════════════════════════════════════
-            # COMÚN: escribir configuración también para el servicio (cuenta SYSTEM)
-            # El instalador MSI registra un servicio "RustDesk" que corre como SYSTEM
-            # y arranca en cada boot. Si no tiene esta config, usa la de fábrica y
-            # la GUI la hereda al reconectarse — por eso "se resetea" tras reiniciar.
+            # COMÚN: escribir configuración también para el servicio (cuenta LocalService)
+            # El instalador MSI registra un servicio "RustDesk" que corre como
+            # NT AUTHORITY\LocalService y arranca en cada boot. Su config vive en
+            # el perfil de esa cuenta de servicio, no en %APPDATA% del usuario.
+            # Confirmado por el propio equipo de RustDesk:
+            # https://github.com/rustdesk/rustdesk/issues/769#issuecomment-1154947431
             # ══════════════════════════════════════════════════════════════════
             try {
-                $sysCfgDir = "$env:SystemRoot\System32\config\systemprofile\AppData\Roaming\RustDesk\config"
+                $sysCfgDir = "$env:SystemRoot\ServiceProfiles\LocalService\AppData\Roaming\RustDesk\config"
                 if (-not (Test-Path $sysCfgDir)) { New-Item -ItemType Directory $sysCfgDir -Force | Out-Null }
                 [IO.File]::WriteAllText("$sysCfgDir\RustDesk.toml",  $toml1, (New-Object Text.UTF8Encoding $false))
                 [IO.File]::WriteAllText("$sysCfgDir\RustDesk2.toml", $toml2, (New-Object Text.UTF8Encoding $false))
-                L "Config del servicio (SYSTEM) escrita en: $sysCfgDir"
-            } catch { L "  (Config de SYSTEM: omitida — $_)" }
+                L "Config del servicio (LocalService) escrita en: $sysCfgDir"
+            } catch { L "  (Config del servicio: omitida — $_)" }
 
             try {
                 $rkLm = "HKLM:\Software\RustDesk"
@@ -548,13 +558,10 @@ $btnInst.Add_Click({
                 L "Registro HKLM:\Software\RustDesk configurado."
             } catch { L "  (Registro HKLM: omitido — OK)" }
 
-            try {
-                $svc = Get-Service -Name "RustDesk" -EA SilentlyContinue
-                if ($svc) {
-                    Restart-Service -Name "RustDesk" -Force -EA Stop
-                    L "Servicio RustDesk reiniciado — config del servicio aplicada."
-                }
-            } catch { L "  (No se pudo reiniciar el servicio RustDesk: $_)" }
+            if ($svc) {
+                try { Start-Service -Name "RustDesk" -EA Stop; L "Servicio RustDesk iniciado con la config nueva." }
+                catch { L "  (No se pudo iniciar el servicio RustDesk: $_)" }
+            }
 
             if ($dlDir) {
                 L "Limpiando temporales..."
